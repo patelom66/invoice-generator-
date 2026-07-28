@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="bi bi-gear me-2"></i>Settings</h1>
+        <p class="text-muted mb-0">Customize your InvoiceApp</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header"><i class="bi bi-currency-exchange me-2"></i>Currency Settings</div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Select Currency Symbol</label>
+                        <select name="currency" class="form-select">
+                            <option value="$" {% if currency == '$' %}selected{% endif %}>$ — US Dollar</option>
+                            <option value="₹" {% if currency == '₹' %}selected{% endif %}>₹ — Indian Rupee</option>
+                            <option value="£" {% if currency == '£' %}selected{% endif %}>£ — British Pound</option>
+                            <option value="€" {% if currency == '€' %}selected{% endif %}>€ — Euro</option>
+                            <option value="¥" {% if currency == '¥' %}selected{% endif %}>¥ — Japanese Yen</option>
+                            <option value="CAD$" {% if currency == 'CAD$' %}selected{% endif %}>CAD$ — Canadian Dollar</option>
+                            <option value="AED" {% if currency == 'AED' %}selected{% endif %}>AED — UAE Dirham</option>
+                        </select>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Current currency: <strong>{{ currency }}</strong> — This will show on all invoices and PDFs.
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check-lg me-1"></i> Save Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

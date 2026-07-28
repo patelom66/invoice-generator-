@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="welcome-bar">
+    <h1>Welcome back, {{ user.name }}! 👋</h1>
+    <p>Here's a summary of your invoicing activity.</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <h3>{{ total_clients }}</h3>
+                <p>Total Clients</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon">🧾</div>
+            <div class="stat-info">
+                <h3>{{ total_invoices }}</h3>
+                <p>Total Invoices</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+                <h3>{{ paid_invoices }}</h3>
+                <p>Paid</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card orange">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+                <h3>{{ pending_invoices }}</h3>
+                <p>Pending</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card red">
+            <div class="stat-icon">🚨</div>
+            <div class="stat-info">
+                <h3>{{ overdue_invoices }}</h3>
+                <p>Overdue</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card blue">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+                <h3>${{ total_revenue }}</h3>
+                <p>Total Revenue</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

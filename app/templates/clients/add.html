@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <h1>Add Client</h1>
+    <a href="{{ url_for('clients.list_clients') }}" class="btn-secondary">← Back</a>
+</div>
+
+<div class="form-box">
+    <form method="POST">
+        <label>Full Name</label>
+        <input type="text" name="name" placeholder="John Doe" required>
+
+        <label>Email</label>
+        <input type="email" name="email" placeholder="john@example.com">
+
+        <label>Phone</label>
+        <input type="text" name="phone" placeholder="+1 234 567 8900">
+
+        <label>Address</label>
+        <textarea name="address" placeholder="123 Main St, City, State"></textarea>
+
+        <button type="submit" class="btn-primary">Save Client</button>
+    </form>
+</div>
+{% endblock %}

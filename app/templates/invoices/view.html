@@ -1,0 +1,160 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="bi bi-file-earmark-text me-2"></i>{{ invoice.invoice_number }}</h1>
+        <p class="text-muted mb-0">Invoice Details</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('invoices.list_invoices') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+        <a href="{{ url_for('invoices.download_pdf', id=invoice.id) }}" class="btn btn-danger">
+            <i class="bi bi-file-pdf me-1"></i> Download PDF
+        </a>
+        {% if invoice.status != 'paid' %}
+        <a href="{{ url_for('invoices.update_status', id=invoice.id, status='paid') }}" class="btn btn-success">
+            <i class="bi bi-check-circle me-1"></i> Mark as Paid
+        </a>
+        {% endif %}
+        {% if invoice.status == 'draft' %}
+        <a href="{{ url_for('invoices.update_status', id=invoice.id, status='sent') }}" class="btn btn-primary">
+            <i class="bi bi-send me-1"></i> Mark as Sent
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-4 pb-3 border-bottom">
+                    <div>
+                        <h3 class="fw-bold text-dark"><i class="bi bi-receipt me-2"></i>InvoiceApp</h3>
+                        <p class="text-muted mb-0">Professional Invoice Generator</p>
+                    </div>
+                    <div class="text-end">
+                        <h4 class="fw-bold text-primary">{{ invoice.invoice_number }}</h4>
+                        {% if invoice.status == 'paid' %}
+                            <span class="badge bg-success rounded-pill">✅ PAID</span>
+                        {% elif invoice.status == 'sent' %}
+                            <span class="badge bg-primary rounded-pill">📤 SENT</span>
+                        {% elif invoice.status == 'overdue' %}
+                            <span class="badge bg-danger rounded-pill">🚨 OVERDUE</span>
+                        {% else %}
+                            <span class="badge bg-secondary rounded-pill">📝 DRAFT</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="bg-light rounded p-3">
+                            <h6 class="fw-bold text-muted text-uppercase mb-2">Bill To</h6>
+                            <p class="fw-bold mb-1">{{ invoice.client_name }}</p>
+                            <p class="text-muted small mb-1">{{ invoice.client_email }}</p>
+                            <p class="text-muted small mb-1">{{ invoice.client_phone }}</p>
+                            <p class="text-muted small mb-0">{{ invoice.client_address }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-light rounded p-3">
+                            <h6 class="fw-bold text-muted text-uppercase mb-2">Invoice Info</h6>
+                            <p class="mb-1"><span class="text-muted">Issue Date:</span> <strong>{{ invoice.issue_date }}</strong></p>
+                            <p class="mb-1"><span class="text-muted">Due Date:</span> <strong>{{ invoice.due_date }}</strong></p>
+                            <p class="mb-0"><span class="text-muted">Tax Rate:</span> <strong>{{ invoice.tax }}%</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-hover mb-4">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Unit</th>
+                            <th class="text-end">Unit Price</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td><strong>{{ item.description }}</strong></td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-center"><span class="unit-badge">{{ item.unit }}</span></td>
+                            <td class="text-end">{{ currency }}{{ "%.2f"|format(item.unit_price) }}</td>
+                            <td class="text-end"><strong>{{ currency }}{{ "%.2f"|format(item.quantity * item.unit_price) }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-end">
+                    <div style="min-width: 280px;">
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted">Subtotal</span>
+                            <strong>{{ currency }}{{ "%.2f"|format(subtotal) }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-2 border-bottom">
+                            <span class="text-muted">Tax ({{ invoice.tax }}%)</span>
+                            <strong>{{ currency }}{{ "%.2f"|format(tax_amount) }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-3">
+                            <span class="fw-bold fs-5">Total</span>
+                            <span class="fw-bold fs-5 text-primary">{{ currency }}{{ "%.2f"|format(total) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if invoice.notes %}
+                <div class="bg-light rounded p-3 mt-3">
+                    <h6 class="fw-bold text-muted text-uppercase mb-2">Notes</h6>
+                    <p class="mb-0">{{ invoice.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header"><i class="bi bi-activity me-2"></i>Status</div>
+            <div class="card-body">
+                {% if invoice.status == 'paid' %}
+                    <div class="alert alert-success mb-0">✅ This invoice has been paid!</div>
+                {% elif invoice.status == 'sent' %}
+                    <div class="alert alert-primary mb-0">📤 Invoice sent to client.</div>
+                {% elif invoice.status == 'overdue' %}
+                    <div class="alert alert-danger mb-0">🚨 This invoice is overdue!</div>
+                {% else %}
+                    <div class="alert alert-secondary mb-0">📝 Draft — not sent yet.</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header"><i class="bi bi-lightning me-2"></i>Quick Actions</div>
+            <div class="card-body d-grid gap-2">
+                <a href="{{ url_for('invoices.download_pdf', id=invoice.id) }}" class="btn btn-outline-danger">
+                    <i class="bi bi-file-pdf me-1"></i> Download PDF
+                </a>
+                {% if invoice.status != 'paid' %}
+                <a href="{{ url_for('invoices.update_status', id=invoice.id, status='paid') }}" class="btn btn-outline-success">
+                    <i class="bi bi-check-circle me-1"></i> Mark as Paid
+                </a>
+                {% endif %}
+                {% if invoice.status == 'draft' %}
+                <a href="{{ url_for('invoices.update_status', id=invoice.id, status='sent') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-send me-1"></i> Mark as Sent
+                </a>
+                {% endif %}
+                <a href="{{ url_for('invoices.delete_invoice', id=invoice.id) }}" class="btn btn-outline-danger"
+                   onclick="return confirm('Delete this invoice?')">
+                    <i class="bi bi-trash me-1"></i> Delete Invoice
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
